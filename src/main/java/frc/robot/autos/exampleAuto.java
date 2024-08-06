@@ -1,3 +1,7 @@
+//THIS AUTO IS DEPRECATED. IT HAS BEEN REPLACED BY PATHPLANNER AUTOS
+
+
+
 package frc.robot.autos;
 
 import frc.robot.Constants;
@@ -54,7 +58,7 @@ public class exampleAuto extends SequentialCommandGroup {
 
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.setPose(exampleTrajectory.getInitialPose())),
+            new InstantCommand(() -> s_Swerve.resetOdometry(exampleTrajectory.getInitialPose())),
             swerveControllerCommand
         );
     }
