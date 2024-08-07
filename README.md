@@ -1,98 +1,96 @@
-**<ins>Note:</ins> While this code intends to provide plug n play configs/tuning numbers for COTS Modules, there are several configs/tunes that are untested with the change to Phoenix 6. If this code is used for one of those untested modules, the module specific configs and tuning will most likely need to be edited.**
+**<ins>注意:</ins> 尽管该代码旨在为商用现成模块（COTS Modules）提供即插即用的配置/调校数值，但在升级到 Phoenix 6 后，一些配置/调校尚未经过测试。如果此代码用于这些未经测试的模块，模块特定的配置和调校可能需要进行编辑。**
 
-**If anyone would like to contribute a config/tune to be added as "tested" please send a message or make a PR.**
+**如果有人愿意贡献一个经过测试的配置/调校，请发送消息或提交 PR。**
 
-**Scroll down for a full list of tested/untested configs.**
+**向下滚动查看已测试/未测试配置的完整列表。**
 
 # BaseTalonFXSwerve </br>
 
-**Basic Swerve Code for a Swerve Module using TalonFX Controllers, a CTRE CANCoder, and a CTRE Pigeon Gyro** </br>
-This code was designed with Swerve Drive Specialties MK3, MK4, MK4i, and WCP SwerveX style modules in mind, but should be easily adaptable to other styles of modules.</br>
+**TalonFX 控制器、CTRE CANCoder 和 CTRE Pigeon 陀螺仪的基本全向轮代码** </br>
+该代码设计适用于 Swerve Drive Specialties 的 MK3、MK4、MK4i 和 WCP SwerveX 模块，但也可以轻松适配其他样式的模块。</br>
 
-**Setting Constants**
+**设置常量**
 ----
-The following things must be adjusted to your robot and module's specific constants in the Constants.java file (all distance units must be in meters, and rotation units in radians):</br>
-These instructions are mostly followable from Step 
-1. Gyro Settings: ```pigeonID```(ensure that the gyro rotation is CCW+ (Counter Clockwise Positive)
+以下内容必须在 Constants.java 文件中根据您的机器人和模块的具体常量进行调整（所有距离单位必须为米，旋转单位为弧度）：</br>
+
+1. 陀螺仪设置: ```pigeonID```（确保陀螺仪旋转是逆时针为正）
 2. ```chosenModule```: 
-<br><b><ins>Note: Not every module's configs are tested. See the note at the top</b></ins>
-<br>If you are using a supported COTS Module, set the module and drive ratio you are using here. 
-<br>This will automatically set certain constants for the specific module required to function properly. 
-<br><b><ins>If you are not using a COTS supported module, you should delete this variable, and fix all the errors that pop up with correct values for the module you are using</b></ins>
-<br> Here is a list of the constants that will automatically be set if you are using a supported module:
-    * Wheel Circumference
-    * Angle Motor Invert
-    * Drive Motor Invert
-    * CANCoder Sensor Invert
-    * Angle Motor Gear Ratio
-    * Drive Motor Gear Ratio
-    * Angle Falcon Motor PID Values
+<br><b><ins>注意: 不是每个模块的配置都经过测试。参见顶部的说明。</b></ins>
+<br>如果您使用的是受支持的 COTS 模块，请在此处设置您正在使用的模块和驱动比率。
+<br>这将自动为该特定模块设置某些常量，以便模块正常工作。
+<br><b><ins>如果您没有使用受支持的 COTS 模块，您应该删除此变量，并为您使用的模块用正确的值修复所有错误。</b></ins>
+<br> 如果您使用的是受支持的模块，这里是自动设置的常量列表：
+    * 轮子周长
+    * 角度电机反转
+    * 驱动电机反转
+    * CANCoder 传感器反转
+    * 角度电机齿轮比
+    * 驱动电机齿轮比
+    * 角度电机 PID 值
     
-3. ```trackWidth```: Center to Center distance of left and right modules in meters.
-4. ```wheelBase```: Center to Center distance of front and rear module wheels in meters.
-5. ```wheelCircumference```: Cirumference of the wheel (including tread) in meters. <br><b>If you are using a supported module, this value will be automatically set.</b>
-6. ```driveGearRatio```: Total gear ratio for the drive motor. <br><b>If you are using a supported module, this value will be automatically set.</b>
-7. ```angleGearRatio```: Total gear ratio for the angle motor. <br><b>If you are using a supported module, this value will be automatically set.</b>
-8. ```canCoderInvert``` and ```angleMotorInvert```: Both must be set such that they are CCW+. <br><b>If you are using a supported module, this value will be automatically set.</b>
-9. ```driveMotorInvert```: <b>If you are using a supported module, this value will be automatically set.</b>
-<br>This can always remain false, since you set your offsets in step 11 such that a positive input to the drive motor will cause the robot to drive forwards.
-<br>However this can be set to true if for some reason you prefer the bevel gears on the wheel to face one direction or another when setting offsets. See Step 11 for more information.
+3. ```trackWidth```: 左右模块中心到中心的距离，单位为米。
+4. ```wheelBase```: 前后模块轮子中心到中心的距离，单位为米。
+5. ```wheelCircumference```: 轮子（包括胎面）的周长，单位为米。<br><b>如果您使用的是受支持的模块，此值将自动设置。</b>
+6. ```driveGearRatio```: 驱动电机的总齿轮比。<br><b>如果您使用的是受支持的模块，此值将自动设置。</b>
+7. ```angleGearRatio```: 角度电机的总齿轮比。<br><b>如果您使用的是受支持的模块，此值将自动设置。</b>
+8. ```canCoderInvert``` 和 ```angleMotorInvert```: 都必须设置为逆时针为正。<br><b>如果您使用的是受支持的模块，此值将自动设置。</b>
+9. ```driveMotorInvert```: <b>如果您使用的是受支持的模块，此值将自动设置。</b>
+<br>由于您在第 11 步中设置了偏移，因此始终可以保持为 false，以便驱动电机的正输入将使机器人向前移动。
+<br>不过，如果由于某些原因您更喜欢在设置偏移时将轮子上的斜齿轮面向一个方向或另一个方向，则可以将其设置为 true。有关更多信息，请参阅第 11 步。
 
-10. ```Module Specific Constants```: set the Can Id's of the motors and CANCoders for the respective modules, see the next step for setting offsets.
-11. Setting Offsets
-    * For finding the offsets, use a piece of 1x1 metal that is straight against the forks of the front and back modules (on the left and right side) to ensure that the modules are straight. 
-    * Point the bevel gears of all the wheels in the same direction (either facing left or right), where a postive input to the drive motor drives the robot forward (you can use phoenix tuner to test this). If for some reason you set the offsets with the wheels backwards, you can change the ```driveMotorInvert``` value to fix.
-    * Open smartdashboard (or shuffleboard and go to the smartdashboard tab), you will see 4 printouts called "Mod 0 Cancoder", "Mod 1 Cancoder", etc. 
-    <br>If you have already straightened the modules, copy those 4 numbers exactly (to 2 decimal places) to their respective ```angleOffset``` variable in constants.
-    <br><b>Note:</b> The CANcoder values printed to smartdashboard are in degrees, when copying the values to ```angleOffset``` you must use ```Rotation2d.fromDegrees("copied value")```.
+10. ```模块特定常量```: 为各个模块设置电机和 CANCoder 的 CAN ID，查看下一步以设置偏移。
+11. 设置偏移
+    * 要查找偏移量，请使用一块 1x1 的金属，使其紧贴前后模块的支架（在左右两侧），以确保模块是直的。
+    * 将所有轮子的斜齿轮指向同一方向（要么面向左，要么面向右），其中驱动电机的正输入驱动机器人向前移动（可以使用 Phoenix Tuner 进行测试）。如果由于某些原因您在车轮向后时设置了偏移，则可以更改 ```driveMotorInvert``` 值来修复。
+    * 打开 smartdashboard（或 shuffleboard 并进入 smartdashboard 选项卡），您将看到 4 个名为 "Mod 0 Cancoder"、"Mod 1 Cancoder" 等的输出。
+    <br>如果您已将模块调直，请将这四个数字精确地复制（到小数点后两位）到其各自的 ```angleOffset``` 变量中。
+    <br><b>注意:</b> 打印到 smartdashboard 的 CANcoder 值为角度值，当将这些值复制到 ```angleOffset``` 时，必须使用 ```Rotation2d.fromDegrees("复制的值")```。
 
-12. Angle Motor PID Values: <br><b>If you are using a supported module, this value will be automatically set. If you are not, or prefer a more or less aggressive response, you can use the below instructions to tune.</b> 
-    * To tune start with a low P value (0.01).
-    * Multiply by 10 until the module starts oscilating around the set point
-    * Scale back by searching for the value (for example, if it starts oscillating at a P of 10, then try (10 -> 5 -> 7.5 -> etc)) until the module doesn't oscillate around the setpoint.
-    * If there is any overshoot you can add in some D by repeating the same process, leave at 0 if not. Always leave I at 0.
+12. 角度电机 PID 值: <br><b>如果您使用的是受支持的模块，此值将自动设置。如果不是，或者您更喜欢更积极或更不激进的响应，您可以使用以下说明进行调试。</b> 
+    * 从较小的 P 值（0.01）开始进行调试。
+    * 乘以 10，直到模块开始在设定点周围振荡。
+    * 通过查找数值来缩小搜索范围（例如，如果它在 P 值为 10 时开始振荡，则尝试（10 -> 5 -> 7.5 -> 等）），直到模块不在设定点周围振荡。
+    * 如果有任何过冲，您可以通过重复相同的过程添加一些 D，如果没有则保持为 0。始终保持 I 为 0。
 
-13. ```maxSpeed```: In Meters Per Second. ```maxAngularVelocity```: In Radians Per Second. For these you can use the theoretical values, but it is better to physically drive the robot and find the actual max values.
+13. ```maxSpeed```: 单位为米/秒。 ```maxAngularVelocity```: 单位为弧度/秒。对于这些值，您可以使用理论值，但更好的是物理驱动机器人并找到实际的最大值。
 
-
-14. Get the drive characterization values (KS, KV, KA) by using the WPILib characterization tool, found [here](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-characterization/introduction.html). You will need to lock your modules straight forward, and complete the characterization as if it was a standard tank drive.
+14. 通过使用 WPILib 表征工具获得驱动表征值 (KS, KV, KA)，请访问[此处](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-characterization/introduction.html)。您将需要将模块锁定向前，并按照标准履带驱动方式完成表征。
 15. ```driveKP```: 
-<br>After completeing characterization and inserting the KS, KV, and KA values into the code, tune the drive motor kP until it doesn't overshoot and doesnt oscilate around a target velocity.
-<br>Leave ```driveKI```, and ```driveKD``` at 0.0.
+<br>在完成表征并将 KS、KV 和 KA 值插入代码后，调整驱动电机 kP 直到其不超调并且不在目标速度周围振荡。
+<br>将 ```driveKI``` 和 ```driveKD``` 保持为 0.0。
 
-
-**Controller Mappings**
+**控制器映射**
 ----
-This code is natively setup to use a xbox controller to control the swerve drive. </br>
-* Left Stick: Translation Control (forwards and sideways movement)
-* Right Stick: Rotation Control </br>
-* Y button: Zero Gyro (useful if the gyro drifts mid match, just rotate the robot forwards, and press Y to rezero)
-* Left Bumper: Switches To Robot Centric Control while held
+此代码本机支持使用 Xbox 控制器来控制全向轮驱动。</br>
+* 左摇杆: 平移控制（向前和侧向移动）
+* 右摇杆: 旋转控制</br>
+* Y 按钮: 归零陀螺仪（如果陀螺仪在比赛中漂移，将机器人旋转到向前，然后按 Y 重新归零）
+* 左侧按钮: 在按住时切换到机器人中心控制
 
-**Tested Modules**
+**测试过的模块**
 ----
-| Vendor | Module | Motor | Configs (Motor Inverts etc) | Rotation Motor Tuning |
+| 供应商 | 模块 | 电机 | 配置（电机反转等） | 旋转电机调试 |
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
-| WCP | SwerveX Standard  | Kraken X60 | <code style="color : red">Untested</code> | <code style="color : red">Untested</code> |
-| WCP | SwerveX Standard  | Falcon 500 | <code style="color : red">Untested</code> | <code style="color : red">Untested</code> |
-| WCP | SwerveX Flipped | Kraken X60 | <code style="color : red">Untested</code> | <code style="color : red">Untested</code> |
-| WCP | SwerveX Flipped | Falcon 500 | <code style="color : red">Untested</code> | <code style="color : red">Untested</code> |
-| SDS | MK3 | Kraken X60 | <code style="color : red">Untested</code> | <code style="color : red">Untested</code> |
-| SDS | MK3 | Falcon 500 | <code style="color : green">Tested</code> | <code style="color : red">Untested</code> |
-| SDS | MK4 | Kraken X60 | <code style="color : red">Untested</code> | <code style="color : red">Untested</code> |
-| SDS | MK4 | Falcon 500 | <code style="color : green">Tested</code> | <code style="color : red">Untested</code> |
-| SDS | MK4i | Kraken X60 | <code style="color : red">Untested</code> | <code style="color : red">Untested</code> |
-| SDS | MK4i | Falcon 500 | <code style="color : green">Tested</code> | <code style="color : green">Tested</code> |
+| WCP | SwerveX 标准  | Kraken X60 | <code style="color : red">未经测试</code> | <code style="color : red">未经测试</code> |
+| WCP | SwerveX 标准  | Falcon 500 | <code style="color : red">未经测试</code> | <code style="color : red">未经测试</code> |
+| WCP | SwerveX 翻转 | Kraken X60 | <code style="color : red">未经测试</code> | <code style="color : red">未经测试</code> |
+| WCP | SwerveX 翻转 | Falcon 500 | <code style="color : red">未经测试</code> | <code style="color : red">未经测试</code> |
+| SDS | MK3 | Kraken X60 | <code style="color : red">未经测试</code> | <code style="color : red">未经测试</code> |
+| SDS | MK3 | Falcon 500 | <code style="color : green">已测试</code> | <code style="color : red">未经测试</code> |
+| SDS | MK4 | Kraken X60 | <code style="color : red">未经测试</code> | <code style="color : red">未经测试</code> |
+| SDS | MK4 | Falcon 500 | <code style="color : green">已测试</code> | <code style="color : red">未经测试</code> |
+| SDS | MK4i | Kraken X60 | <code style="color : red">未经测试</code> | <code style="color : red">未经测试</code> |
+| SDS | MK4i | Falcon 500 | <code style="color : green">已测试</code> | <code style="color : green">已测试</code> |
 
 
-**Changelog**
+**变更日志**
 ---
 * 1/4/24: 
-    * Updated Phoenix to Phoenix 6 - 24.0.0-beta-7
-        * Implemented Phoenix 6's `SensorToMechanismRatio` removing the need to convert gear ratios in code
-        * Implemented Phoenix 6's `ContinuousWrap` removing the need for a custom `SwerveModuleState.optimize` function.
-        * Updated conversions from Phoenix 5's units ("counts") to Phoenix 6's units (rotations).
-    * Updated WPILib to 2024.1.1-beta-4
-    * Added SwerveX Modules and Kraken X60 Motors
-    * Moved from directly using the Gyro angle in `Swerve` for heading (`getGyroYaw()`) to using the odometry output for rotation `getHeading()` as intended by WPILib
-    * Moved repository off of 364's Github 
+    * 将 Phoenix 更新到 Phoenix 6 - 24.0.0-beta-7
+        * 实现了 Phoenix 6 的 `SensorToMechanismRatio`，不再需要在代码中转换齿轮比。
+        * 实现了 Phoenix 6 的 `ContinuousWrap`，不再需要自定义 `SwerveModuleState.optimize` 函数。
+        * 更新了从 Phoenix 5 的单位（“计数”）到 Phoenix 6 的单位（旋转）。
+    * 更新了 WPILib 到 2024.1.1-beta-4
+    * 添加了 SwerveX 模块和 Kraken X60 电机
+    * 从直接使用 `Swerve` 中的陀螺仪角度（`getGyroYaw()`）到使用 WPILib 意图的测距输出 `getHeading()`。
+    * 从 364 的 Github 中移出了此代码库
