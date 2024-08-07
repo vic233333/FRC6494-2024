@@ -21,6 +21,9 @@ public final class Constants {
         public static final COTSTalonFXSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
         COTSTalonFXSwerveConstants.SDS.MK4i.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
 
+        /* Can Bus name */
+        public static final String kCANivoreBusName = "canivore";
+
         /* Drivetrain Constants */
         public static final double trackWidth = 0.6075; //TODO: This must be tuned to specific robot
         public static final double wheelBase = 0.6075; //TODO: This must be tuned to specific robot
@@ -94,7 +97,7 @@ public final class Constants {
             public static final int driveMotorID = 11;
             public static final int angleMotorID = 12;
             public static final int canCoderID = 1;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0.0);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(25.0);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
