@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.COTSTalonFXSwerveConstants;
+import frc.lib.util.COTSTalonFXSwerveConstants.SDS;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
@@ -18,8 +19,18 @@ public final class Constants {
     public static final class Swerve {
         public static final int pigeonID = 1;
 
-        public static final COTSTalonFXSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
-        COTSTalonFXSwerveConstants.SDS.MK4i.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
+        public static final COTSTalonFXSwerveConstants chosenModule =  
+            new COTSTalonFXSwerveConstants(
+                SDS.MK4i.KrakenX60(SDS.MK4i.driveRatios.L2).wheelDiameter,
+                SDS.MK4i.KrakenX60(SDS.MK4i.driveRatios.L2).angleGearRatio,
+                SDS.MK4i.KrakenX60(SDS.MK4i.driveRatios.L2).driveGearRatio,
+                SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleKP,
+                SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleKI,
+                SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleKD,
+                SDS.MK4i.KrakenX60(SDS.MK4i.driveRatios.L2).driveMotorInvert,
+                SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleMotorInvert,
+                SensorDirectionValue.Clockwise_Positive  // 可能需要根据实际情况调整
+            );
 
         /* Can Bus name */
         public static final String kCANivoreBusName = "canivore";
