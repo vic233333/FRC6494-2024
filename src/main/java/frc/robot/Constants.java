@@ -177,6 +177,12 @@ public final class Constants {
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+
+        // Automatic constants
+        public static final double kDriveBackwardsDistance = 1.0; // meters
+        public static final double kDriveBackwardsSpeed = 0.5; // -1 to 1
+        public static final int kAprilTagId7 = 7;
+        public static final int kAprilTagId8 = 8;
     
         public static final double kPXController = 1;
         public static final double kPYController = 1;
