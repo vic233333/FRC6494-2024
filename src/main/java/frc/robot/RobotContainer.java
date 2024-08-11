@@ -22,6 +22,7 @@ public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
     private final Joystick top = new Joystick(1);
+
     /* Drive Controls */
     private final int translationAxis = PS4Controller.Axis.kLeftY.value;
     private final int strafeAxis = PS4Controller.Axis.kLeftX.value;
@@ -33,8 +34,11 @@ public class RobotContainer {
     private final JoystickButton climber = new JoystickButton(top, PS4Controller.Button.kSquare.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL1.value);
     private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
+
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
+    private final VisionSubsystem s_Vision = new VisionSubsystem();
+    private final ShooterSubsystem s_Shooter = new ShooterSubsystem(s_Vision);
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -42,9 +46,9 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
+                () -> -driver.getRawAxis(translationAxis),
+                () -> -driver.getRawAxis(strafeAxis),
+                () -> -driver.getRawAxis(rotationAxis),
                 () -> robotCentric.getAsBoolean()
             )
         );
@@ -65,6 +69,14 @@ public class RobotContainer {
         shooter.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         climber.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+
+        // 更新射击按钮的功能
+        shooter.onTrue(new InstantCommand(() -> s_Shooter.shootBasedOnVision()))
+               .onFalse(new InstantCommand(() -> s_Shooter.stop()));
+
+        // 保留其他按钮的功能，但移除重复的 zeroHeading 调用
+        intaker.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 intake 功能 */}));
+        climber.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 climber 功能 */}));
     }
 
     /**

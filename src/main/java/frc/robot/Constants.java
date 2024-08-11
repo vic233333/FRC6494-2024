@@ -4,8 +4,12 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -142,6 +146,30 @@ public final class Constants {
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
+    }
+
+    public static final class Vision {
+        public static final String cameraName = "OV5647";
+        public static final Translation3d cameraTranslation = new Translation3d(0.5, 0, 0.5); // TODO: 需要根据实际情况调整
+        public static final Rotation3d cameraRotation = new Rotation3d(0, Math.toRadians(-30), 0); // TODO: 需要根据实际情况调整
+        public static final Translation2d speakerPosition = new Translation2d(8.308, 4.105); // TODO: 2024场地中扬声器的位置，需要确认
+
+        public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
+            cameraTranslation, 
+            cameraRotation
+        );
+    }
+
+    public static final class Shooter { //TODO: 修正shooter数据
+        public static final int topMotorID = 4; 
+        public static final int bottomMotorID = 17;
+        public static final String motorCanBus = "canivore";
+        public static final double kP = 0.1;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double kS = 0.0;
+        public static final double RPMsPerVolt = 500.0;
+        public static final double allowedRPMError = 50.0;
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
