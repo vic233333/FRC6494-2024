@@ -21,16 +21,18 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
-
+    private final Joystick top = new Joystick(1);
     /* Drive Controls */
     private final int translationAxis = PS4Controller.Axis.kLeftY.value;
     private final int strafeAxis = PS4Controller.Axis.kLeftX.value;
     private final int rotationAxis = PS4Controller.Axis.kRightX.value;
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
+    private final JoystickButton intaker = new JoystickButton(top, PS4Controller.Button.kTriangle.value);
+    private final JoystickButton shooter = new JoystickButton(top, PS4Controller.Button.kTouchpad.value);
+    private final JoystickButton climber = new JoystickButton(top, PS4Controller.Button.kSquare.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL1.value);
-
+    private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
 
@@ -59,6 +61,9 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
+        intaker.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        shooter.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        climber.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
     }
 
