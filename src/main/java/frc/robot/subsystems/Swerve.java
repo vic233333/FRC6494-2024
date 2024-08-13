@@ -50,7 +50,7 @@ public class Swerve extends SubsystemBase {
         if (Math.abs(translation.getX()) < Constants.stickDeadband 
             && Math.abs(translation.getY()) < Constants.stickDeadband 
             && Math.abs(rotation) < Constants.stickDeadband) {
-            stop();
+            zeroOutput();
             return;
         }
 
@@ -138,6 +138,12 @@ public class Swerve extends SubsystemBase {
 
     public void stop() {
         drive(new Translation2d(0, 0), 0, true, true);
+    }
+
+    public void zeroOutput() {
+        for(SwerveModule mod : mSwerveMods){
+            mod.setDesiredState(new SwerveModuleState(0, mod.getState().angle), true);
+        }
     }
     
     public void setTargetHeading(Rotation2d heading) {
