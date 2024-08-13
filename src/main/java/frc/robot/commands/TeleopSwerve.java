@@ -10,7 +10,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
-
 public class TeleopSwerve extends Command {    
     private Swerve s_Swerve;    
     private DoubleSupplier translationSup;
@@ -35,11 +34,16 @@ public class TeleopSwerve extends Command {
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
+        /* Update target heading if there's rotation input */
+        if (Math.abs(rotationVal) >= Constants.stickDeadband) {
+            s_Swerve.setTargetHeading(s_Swerve.getHeading());
+        }
+
         /* Drive */
         s_Swerve.drive(
-            new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
-            rotationVal * Constants.Swerve.maxAngularVelocity, 
-            !robotCentricSup.getAsBoolean(), 
+            new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
+            rotationVal * Constants.Swerve.maxAngularVelocity,
+            !robotCentricSup.getAsBoolean(),
             false
         );
     }

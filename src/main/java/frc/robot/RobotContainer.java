@@ -45,11 +45,11 @@ public class RobotContainer {
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
-                s_Swerve, 
+                s_Swerve,
                 () -> -driver.getRawAxis(translationAxis),
                 () -> -driver.getRawAxis(strafeAxis),
                 () -> -driver.getRawAxis(rotationAxis),
-                () -> robotCentric.getAsBoolean()
+                () -> !robotCentric.getAsBoolean()
             )
         );
 
@@ -65,17 +65,16 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-        intaker.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        shooter.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        climber.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
-        // 更新射击按钮的功能
+        // 射击按钮功能
         shooter.onTrue(new InstantCommand(() -> s_Shooter.shootBasedOnVision()))
                .onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        // 保留其他按钮的功能，但移除重复的 zeroHeading 调用
+        // Intake 功能
         intaker.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 intake 功能 */}));
+
+        // Climber 功能
         climber.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 climber 功能 */}));
     }
 

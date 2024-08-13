@@ -21,7 +21,14 @@ public final class Constants {
     public static final double stickDeadband = 0.1;
 
     public static final class Swerve {
+        public static final double stickDeadband = 0.1; // 手柄死区设置， Claude提供不保证正常运行
+
         public static final int pigeonID = 0;
+
+        /* heading PID Values */ // TODO: update heading's PID
+        public static final double headingKP = 0.1;
+        public static final double headingKI = 0.0;
+        public static final double headingKD = 0.0;
 
         public static final COTSTalonFXSwerveConstants chosenModule =  
             new COTSTalonFXSwerveConstants(

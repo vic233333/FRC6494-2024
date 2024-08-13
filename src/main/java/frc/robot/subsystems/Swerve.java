@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.controller.PIDController;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -23,10 +24,17 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
+    private PIDController headingController;
+    private Rotation2d targetHeading;
+
     public Swerve() {
-        gyro = new Pigeon2(Constants.Swerve.pigeonID,Constants.Swerve.kCANivoreBusName);
+        gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.Swerve.kCANivoreBusName);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
+
+        headingController = new PIDController(Constants.Swerve.headingKP, Constants.Swerve.headingKI, Constants.Swerve.headingKD);
+        headingController.enableContinuousInput(-Math.PI, Math.PI);
+        targetHeading = new Rotation2d();
 
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -39,25 +47,39 @@ public class Swerve extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+        if (Math.abs(translation.getX()) < Constants.stickDeadband 
+            && Math.abs(translation.getY()) < Constants.stickDeadband 
+            && Math.abs(rotation) < Constants.stickDeadband) {
+            stop();
+            return;
+        }
+
+        double headingCorrection = 0;
+        if (Math.abs(rotation) < Constants.stickDeadband) {
+            headingCorrection = headingController.calculate(getHeading().getRadians(), targetHeading.getRadians());
+        } else {
+            targetHeading = getHeading();
+        }
+
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                     translation.getX(), 
                                     translation.getY(), 
-                                    rotation, 
+                                    rotation + headingCorrection, 
                                     getHeading()
                                 )
                                 : new ChassisSpeeds(
                                     translation.getX(), 
                                     translation.getY(), 
-                                    rotation)
+                                    rotation + headingCorrection)
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
-    }    
+    }
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -117,6 +139,10 @@ public class Swerve extends SubsystemBase {
     public void stop() {
         drive(new Translation2d(0, 0), 0, true, true);
     }
+    
+    public void setTargetHeading(Rotation2d heading) {
+        targetHeading = heading;
+    }
 
     @Override
     public void periodic(){
@@ -127,5 +153,8 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
+        SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
+        SmartDashboard.putNumber("Target Heading", targetHeading.getDegrees());
+        SmartDashboard.putNumber("Heading Error", targetHeading.minus(getHeading()).getDegrees());
     }
 }
