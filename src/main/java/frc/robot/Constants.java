@@ -38,8 +38,8 @@ public final class Constants {
                 SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleKP,
                 SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleKI,
                 SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleKD,
-                SDS.MK4i.KrakenX60(SDS.MK4i.driveRatios.L2).driveMotorInvert,
-                SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleMotorInvert,
+                SDS.MK4i.KrakenX60(SDS.MK4i.driveRatios.L2).driveMotorInvert,       //isInverted false
+                SDS.MK4i.Falcon500(SDS.MK4i.driveRatios.L2).angleMotorInvert,       //isInverted true
                 SensorDirectionValue.Clockwise_Positive  // 可能需要根据实际情况调整
             );
 
