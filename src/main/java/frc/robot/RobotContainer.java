@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -41,7 +43,6 @@ public class RobotContainer {
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
     private final VisionSubsystem s_Vision = new VisionSubsystem();
 
-
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
@@ -56,6 +57,10 @@ public class RobotContainer {
 
         // Configure the button bindings
         configureButtonBindings();
+
+        CommandScheduler.getInstance().registerSubsystem(s_Swerve);
+        CommandScheduler.getInstance().registerSubsystem(s_Shooter);
+        CommandScheduler.getInstance().registerSubsystem(s_Vision);
     }
 
     /**

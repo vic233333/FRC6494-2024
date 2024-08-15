@@ -162,7 +162,7 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("vision/distance", distanceToSpeakerFromCenter());
         SmartDashboard.putString("vision/Last pose", lastPose.toString());
         SmartDashboard.putNumber("vision/Angle error", angleError().getDegrees());
-
+    
         for (int i = 1; i <= 16; i++) {
             AprilTagInfo info = aprilTagMap.get(i);
             String prefix = "vision/AprilTag " + i + "/";
