@@ -35,13 +35,8 @@ public class VisionSubsystem extends SubsystemBase {
     private Map<Integer, AprilTagInfo> aprilTagMap = new HashMap<>();
 
     public void robotInit() {
-        // 确保相机开始扫描AprilTag
         camera.setDriverMode(false);
-
-        // 初始化SmartDashboard显示
         SmartDashboard.putData("vision/Field", field);
-        
-        // 设置updateDashboard为true，确保数据会被输出到SmartDashboard
         updateDashboard = true;
     }
 
@@ -66,7 +61,6 @@ public class VisionSubsystem extends SubsystemBase {
             kTagLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath().resolve("2024-crescendo-hq.json"));
         } catch (IOException e) {
             e.printStackTrace();
-            System.exit(1);
         }
 
         photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, Constants.Vision.CAMERA_TO_ROBOT);
@@ -107,10 +101,8 @@ public class VisionSubsystem extends SubsystemBase {
         if (!haveSpeakerTarget) {
             return new Rotation2d(0.0);
         }
-
         Rotation2d speakerAngle = angleToSpeaker();
         Rotation2d robotAngle = lastPose.getRotation();
-
         return speakerAngle.minus(robotAngle);
     }
 
@@ -167,16 +159,15 @@ public class VisionSubsystem extends SubsystemBase {
             AprilTagInfo info = aprilTagMap.get(i);
             String prefix = "vision/AprilTag " + i + "/";
             
+            SmartDashboard.putBoolean(prefix + "Detected", info.isDetected);
             if (info.isDetected) {
-                SmartDashboard.putString(prefix + "Status", "Target Found");
                 SmartDashboard.putNumber(prefix + "Distance", info.distance);
                 SmartDashboard.putNumber(prefix + "Yaw", info.yaw);
                 SmartDashboard.putNumber(prefix + "Pitch", info.pitch);
             } else {
-                SmartDashboard.putString(prefix + "Status", "Target Lost");
-                SmartDashboard.putString(prefix + "Distance", "/");
-                SmartDashboard.putString(prefix + "Yaw", "/");
-                SmartDashboard.putString(prefix + "Pitch", "/");
+                SmartDashboard.putNumber(prefix + "Distance", 0);
+                SmartDashboard.putNumber(prefix + "Yaw", 0);
+                SmartDashboard.putNumber(prefix + "Pitch", 0);
             }
         }
     }
