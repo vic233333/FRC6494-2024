@@ -1,4 +1,4 @@
-package frc.robot;
+    package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -94,7 +94,7 @@ public final class Constants {
         /* Drive Motor PID Values */
         public static final double driveKP = 0.25; //TODO: This must be tuned to specific robot
         public static final double driveKI = 0.0;
-        public static final double driveKD = 0.1;
+        public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values From SYSID */
@@ -168,8 +168,8 @@ public final class Constants {
     }
 
     public static final class Shooter { //TODO: 修正shooter数据
-        public static final int topMotorID = 4; 
-        public static final int bottomMotorID = 17;
+        public static final int leftMotorID = 5; 
+        public static final int rightMotorID = 6;
         public static final String motorCanBus = "canivore";
         public static final double kP = 0.1;
         public static final double kI = 0.0;
