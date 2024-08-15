@@ -1,94 +1,112 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-
-import edu.wpi.first.apriltag.AprilTagDetector;
-import edu.wpi.first.apriltag.AprilTagDetection;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class VisionSubsystem extends SubsystemBase {
-    private Thread m_visionThread;
-    private final AprilTagDetector aprilTagDetector;
-    private Pose2d lastEstimatedPose;
+    private static VisionSubsystem instance;
+    private final PhotonCamera camera;
+    private final PhotonPoseEstimator photonEstimator;
+    private AprilTagFieldLayout kTagLayout;
+    private final Field2d field = new Field2d();
+    private double lastEstTimestamp = 0.0;
+    private boolean haveTarget = false;
+    private boolean haveSpeakerTarget = false;
+    private Pose2d lastPose = new Pose2d();
+    private boolean updateDashboard = true;
 
     public VisionSubsystem() {
-        aprilTagDetector = new AprilTagDetector();
-        aprilTagDetector.addFamily("tag36h11", 3);
+        camera = new PhotonCamera(Constants.Vision.cameraName);
 
-        m_visionThread = new Thread(() -> {
-            UsbCamera camera = CameraServer.startAutomaticCapture();
-            camera.setResolution(640, 480);
-
-            CvSink cvSink = CameraServer.getVideo();
-            CvSource outputStream = CameraServer.putVideo("Processed", 640, 480);
-
-            Mat mat = new Mat();
-
-            while (!Thread.interrupted()) {
-                if (cvSink.grabFrame(mat) == 0) {
-                    outputStream.notifyError(cvSink.getError());
-                    continue;
-                }
-
-                processFrame(mat);
-
-                outputStream.putFrame(mat);
-            }
-        });
-        m_visionThread.setDaemon(true);
-        m_visionThread.start();
-    }
-
-    private void processFrame(Mat frame) {
-        AprilTagDetection[] detections = aprilTagDetector.detect(frame);
-
-        for (AprilTagDetection detection : detections) {
-            Imgproc.rectangle(
-                frame,
-                new Point(detection.getCornerX(0), detection.getCornerY(0)),
-                new Point(detection.getCornerX(2), detection.getCornerY(2)),
-                new Scalar(0, 255, 0),
-                2
-            );
-
-            Imgproc.putText(
-                frame,
-                "ID: " + detection.getId(),
-                new Point(detection.getCenterX() - 20, detection.getCenterY()),
-                Imgproc.FONT_HERSHEY_SIMPLEX,
-                1,
-                new Scalar(0, 0, 255),
-                2
-            );
-
-            // Here you would calculate the pose based on the detection
-            // For simplicity, we're just storing the center of the tag as a 2D pose
-            lastEstimatedPose = new Pose2d(detection.getCenterX(), detection.getCenterY(), new Rotation2d());
+        try {
+            kTagLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath().resolve("2024-crescendo-hq.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
         }
+
+        photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, Constants.Vision.CAMERA_TO_ROBOT);
+        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+        SmartDashboard.putData("vision/Field", field);
     }
 
-    public Pose2d getEstimatedPose() {
-        return lastEstimatedPose;
-    }
-
-    public double getDistanceToSpeaker() {
-        if (lastEstimatedPose == null) {
-            return Double.POSITIVE_INFINITY;
+    public static VisionSubsystem getInstance() {
+        if (instance == null) {
+            instance = new VisionSubsystem();
         }
-        return lastEstimatedPose.getTranslation().getDistance(Constants.Vision.speakerPosition);
+        return instance;
     }
 
-    public boolean hasValidTarget() {
-        return lastEstimatedPose != null;
+    public boolean haveTarget() {
+        return haveTarget;
+    }
+
+    public boolean haveSpeakerTarget() {
+        return haveSpeakerTarget;
+    }
+
+    private Translation2d speakerOffset() {
+        return lastPose.getTranslation().minus(Constants.Vision.speakerPosition);
+    }
+
+    public Rotation2d angleToSpeaker() {
+        return speakerOffset().getAngle();
+    }
+
+    public Rotation2d angleError() {
+        if (!haveSpeakerTarget) {
+            return new Rotation2d(0.0);
+        }
+
+        Rotation2d speakerAngle = angleToSpeaker();
+        Rotation2d robotAngle = lastPose.getRotation();
+
+        return speakerAngle.minus(robotAngle);
+    }
+
+    public double distanceToSpeakerFromCenter() {
+        return lastPose.getTranslation().getDistance(Constants.Vision.speakerPosition);
+    }
+
+    @Override
+    public void periodic() {
+        Optional<EstimatedRobotPose> result = photonEstimator.update();
+        
+        haveTarget = result.isPresent();
+        if (haveTarget) {
+            EstimatedRobotPose pose = result.get();
+            lastEstTimestamp = pose.timestampSeconds;
+            lastPose = pose.estimatedPose.toPose2d();
+            field.setRobotPose(lastPose);
+
+            // Assuming speaker tags are 3, 4, 7, and 8 (you may need to adjust this)
+            haveSpeakerTarget = pose.targetsUsed.stream()
+                .anyMatch(target -> target.getFiducialId() == 3 || target.getFiducialId() == 4 ||
+                                    target.getFiducialId() == 7 || target.getFiducialId() == 8);
+        }
+
+        if (updateDashboard) {
+            SmartDashboard.putBoolean("vision/Have target(s)", haveTarget);
+            SmartDashboard.putBoolean("vision/Have speaker target", haveSpeakerTarget);
+            SmartDashboard.putNumber("vision/distance", distanceToSpeakerFromCenter());
+            SmartDashboard.putString("vision/Last pose", lastPose.toString());
+            SmartDashboard.putNumber("vision/Angle error", angleError().getDegrees());
+        }
     }
 }
