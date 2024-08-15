@@ -177,6 +177,9 @@ public final class Constants {
         public static final double kS = 0.0;
         public static final double RPMsPerVolt = 500.0;
         public static final double allowedRPMError = 50.0;
+        public static final double optimalShootingDistance = 2.0; // TODO: 最佳射击距离
+        public static final double leftMotorOutput = 1.0; // 左发射马达转速
+        public static final double rightMotorOutput = -1.0; // 右发射马达转速
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
@@ -186,14 +189,18 @@ public final class Constants {
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
         // Automatic constants
-        public static final double kDriveBackwardsDistance = 1.0; // meters
-        public static final double kDriveBackwardsSpeed = 0.5; // -1 to 1
         public static final int kAprilTagId7 = 7;
         public static final int kAprilTagId8 = 8;
-    
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
+
+        public static final double kP = 10.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+        public static final double tolerance  = 0.05;
+
+        public static final double initTranslationX = -2.0;
+        public static final double initTranslationY = 0.0;
+        public static final double initTranslationRotation = 0.0;
     
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =

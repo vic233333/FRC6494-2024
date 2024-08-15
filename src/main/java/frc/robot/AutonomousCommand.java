@@ -2,34 +2,37 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.AlignToAprilTagCommand;;
+import frc.robot.subsystems.AlignToAprilTagCommand;
 
 public class AutonomousCommand extends SequentialCommandGroup {
     public AutonomousCommand(Swerve swerve, VisionSubsystem vision, ShooterSubsystem shooter) {
         addCommands(
-            // Step 1: Drive backwards for a set distance
-            new InstantCommand(() -> swerve.drive(new Translation2d(-1, 0), 0, false, true))
-                .andThen(new WaitCommand(2))
-                .andThen(new InstantCommand(swerve::stop)),
+            // Step 1: Drive backwards for 2 meters
+            new RunCommand(() -> 
+                swerve.drive(new Translation2d(
+                    Constants.AutoConstants.initTranslationX,
+                    Constants.AutoConstants.initTranslationY),
+                    Constants.AutoConstants.initTranslationRotation,
+                    true, false))
+                    .withTimeout(2)
+                    .andThen(new InstantCommand(swerve::stop)),
             
-            // Step 2: Align with AprilTag
-            new AlignToAprilTagCommand(swerve, vision),
+            // Step 2 & 3: Find AprilTags 7 and 8, and move to the best shooting position
+            new AlignToAprilTagCommand(swerve, vision)
+            .withTimeout(5)
+            .andThen(new InstantCommand(swerve::stop)),
             
-            // Step 3: Shoot the "note"
-            new InstantCommand(shooter::shootBasedOnVision)
-                .andThen(new WaitCommand(2))
-                .andThen(new InstantCommand(() -> {
-                    if (shooter.isReadyToShoot()) {
-                        // Trigger note release mechanism here
-                    }
-                }))
-                .andThen(new WaitCommand(1))
-                .andThen(shooter::stop)
+            // Step 4: Shoot
+            shooter.shotCommand()
+            .withTimeout(3),
+            
+            // Step 5: Stop
+            new InstantCommand(swerve::stop)
         );
     }
 }
