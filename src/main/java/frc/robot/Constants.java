@@ -156,7 +156,7 @@ public final class Constants {
     }
 
     public static final class Vision {
-        public static final String cameraName = "OV5647";
+        public static final String cameraName = "Webcam_C170";
         public static final Translation3d cameraTranslation = new Translation3d(0.5, 0, 0.5); // TODO: 需要根据实际情况调整
         public static final Rotation3d cameraRotation = new Rotation3d(0, Math.toRadians(-30), 0); // TODO: 需要根据实际情况调整
         public static final Translation2d speakerPosition = new Translation2d(8.308, 4.105); // TODO: 2024场地中扬声器的位置，需要确认
