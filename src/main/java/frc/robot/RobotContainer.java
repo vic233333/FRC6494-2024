@@ -30,15 +30,14 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton intaker = new JoystickButton(top, PS4Controller.Button.kTriangle.value);
-    private final JoystickButton shooter = new JoystickButton(top, PS4Controller.Button.kTouchpad.value);
+    private final JoystickButton shooter = new JoystickButton(driver, PS4Controller.Button.kTouchpad.value);
     private final JoystickButton climber = new JoystickButton(top, PS4Controller.Button.kSquare.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL1.value);
     private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final VisionSubsystem s_Vision = new VisionSubsystem();
-    private final ShooterSubsystem s_Shooter = new ShooterSubsystem(s_Vision);
+    private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -68,7 +67,7 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
         // 射击按钮功能
-        shooter.onTrue(new InstantCommand(() -> s_Shooter.shootBasedOnVision()))
+        shooter.onTrue(new InstantCommand(() -> s_Shooter.Shoot()))
                .onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
         // Intake 功能
