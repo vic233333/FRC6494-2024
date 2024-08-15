@@ -157,9 +157,16 @@ public final class Constants {
 
     public static final class Vision {
         public static final String cameraName = "Webcam_C170";
+        public static final String cameraUrl = "http://10.64.94.11:1181/stream.mjpg";
+        public static final int cameraResolutionX = 320;
+        public static final int cameraResolutionY = 240;
+        public static final int cameraFPS = 30;
         public static final Translation3d cameraTranslation = new Translation3d(0.5, 0, 0.5); // TODO: 需要根据实际情况调整
         public static final Rotation3d cameraRotation = new Rotation3d(0, Math.toRadians(-30), 0); // TODO: 需要根据实际情况调整
         public static final Translation2d speakerPosition = new Translation2d(8.308, 4.105); // TODO: 2024场地中扬声器的位置，需要确认
+
+        public static final int mjpegCompression = 50;
+        public static final int mjpegDefaultCompression = 50;
 
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(
             cameraTranslation, 

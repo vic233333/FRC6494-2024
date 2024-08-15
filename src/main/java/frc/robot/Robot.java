@@ -31,9 +31,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    PortForwarder.add(1181, "10.64.94.11", 1181);
     m_robotContainer = new RobotContainer();
     m_robotContainer.getVision().robotInit();
-    PortForwarder.add(5800, "10.64.94.11", 5800); 
   }
 
   /**

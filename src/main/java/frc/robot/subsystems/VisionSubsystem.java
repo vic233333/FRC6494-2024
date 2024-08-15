@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,9 +22,15 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
+
 public class VisionSubsystem extends SubsystemBase {
+    private UsbCamera usbCamera;
+    private MjpegServer mjpegServer;
     private static VisionSubsystem instance;
-    private final PhotonCamera camera;
+    private final PhotonCamera photoCamera;
     private final PhotonPoseEstimator photonEstimator;
     private AprilTagFieldLayout kTagLayout;
     private final Field2d field = new Field2d();
@@ -35,7 +42,7 @@ public class VisionSubsystem extends SubsystemBase {
     private Map<Integer, AprilTagInfo> aprilTagMap = new HashMap<>();
 
     public void robotInit() {
-        camera.setDriverMode(false);
+        photoCamera.setDriverMode(false);
         SmartDashboard.putData("vision/Field", field);
         updateDashboard = true;
     }
@@ -55,7 +62,20 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public VisionSubsystem() {
-        camera = new PhotonCamera(Constants.Vision.cameraName);
+        // 初始化USB摄像头
+        usbCamera = new UsbCamera(Constants.Vision.cameraName, 0);
+        usbCamera.setResolution(Constants.Vision.cameraResolutionX, Constants.Vision.cameraResolutionY);
+        usbCamera.setFPS(Constants.Vision.cameraFPS);
+
+        // 设置MJPEG服务器
+        mjpegServer = CameraServer.addServer("serve_" + Constants.Vision.cameraName, 1811);
+        mjpegServer.setSource(usbCamera);
+
+        // 设置MJPEG流质量
+        mjpegServer.setCompression(Constants.Vision.mjpegCompression);
+        mjpegServer.setDefaultCompression(Constants.Vision.mjpegDefaultCompression);
+
+        photoCamera = new PhotonCamera(Constants.Vision.cameraName);
 
         try {
             kTagLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath().resolve("2024-crescendo-hq.json"));
@@ -63,7 +83,7 @@ public class VisionSubsystem extends SubsystemBase {
             e.printStackTrace();
         }
 
-        photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, Constants.Vision.CAMERA_TO_ROBOT);
+        photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, photoCamera, Constants.Vision.CAMERA_TO_ROBOT);
         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         SmartDashboard.putData("vision/Field", field);
