@@ -196,6 +196,10 @@ public final class Constants {
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
+        public static final double kPXController = 1;
+        public static final double kPYController = 1;
+        public static final double kPThetaController = 1;
+
         public static final double tolerance  = 0.05;
 
         public static final double initTranslationX = -2.0;
