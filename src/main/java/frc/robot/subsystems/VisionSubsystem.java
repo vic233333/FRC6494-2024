@@ -34,6 +34,17 @@ public class VisionSubsystem extends SubsystemBase {
     private boolean updateDashboard = true;
     private Map<Integer, AprilTagInfo> aprilTagMap = new HashMap<>();
 
+    public void robotInit() {
+        // 确保相机开始扫描AprilTag
+        camera.setDriverMode(false);
+
+        // 初始化SmartDashboard显示
+        SmartDashboard.putData("vision/Field", field);
+        
+        // 设置updateDashboard为true，确保数据会被输出到SmartDashboard
+        updateDashboard = true;
+    }
+
     private class AprilTagInfo {
         public boolean isDetected;
         public double distance;
