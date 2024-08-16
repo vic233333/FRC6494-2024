@@ -24,7 +24,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 
 public class VisionSubsystem extends SubsystemBase {
     private UsbCamera usbCamera;
