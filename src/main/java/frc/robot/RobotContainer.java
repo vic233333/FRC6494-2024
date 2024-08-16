@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -42,7 +41,7 @@ public class RobotContainer {
     private final Swerve s_Swerve = new Swerve();
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
     private final VisionSubsystem s_Vision = new VisionSubsystem();
-
+    private final IntakerSubsysem s_Intaker = new IntakerSubsysem();
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
@@ -78,7 +77,7 @@ public class RobotContainer {
                .onFalse(new InstantCommand(() -> s_Shooter.stop()));
         
         // Intake 功能
-        intaker.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 intake 功能 */}));
+        intaker.onTrue(new InstantCommand(() -> s_Intaker.intake(s_Swerve)));
         
         // Climber 功能
         climber.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 climber 功能 */}));
