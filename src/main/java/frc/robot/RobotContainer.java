@@ -30,8 +30,8 @@ public class RobotContainer {
     private final int rotationAxis = PS4Controller.Axis.kRightX.value;
 
     /* Driver Buttons */
-    private final JoystickButton intaker = new JoystickButton(top, PS4Controller.Button.kTriangle.value);
-    private final JoystickButton shooter = new JoystickButton(driver, PS4Controller.Button.kTouchpad.value);
+    private final JoystickButton intaker = new JoystickButton(driver, PS4Controller.Button.kL2.value);
+    private final JoystickButton shooter = new JoystickButton(driver, PS4Controller.Button.kR2.value);
     private final JoystickButton climber = new JoystickButton(top, PS4Controller.Button.kSquare.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, PS4Controller.Button.kL1.value);
     private final JoystickButton zeroGyro = new JoystickButton(driver, PS4Controller.Button.kTriangle.value);
@@ -77,8 +77,8 @@ public class RobotContainer {
                .onFalse(new InstantCommand(() -> s_Shooter.stop()));
         
         // Intake 功能
-        intaker.onTrue(new InstantCommand(() -> s_Intaker.intake(s_Swerve)));
-        
+        intaker.onTrue(new InstantCommand(() -> s_Intaker.setIntakerSpeed()))
+               .onFalse(new InstantCommand(() -> s_Intaker.stop()));
         // Climber 功能
         climber.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 climber 功能 */}));
         
