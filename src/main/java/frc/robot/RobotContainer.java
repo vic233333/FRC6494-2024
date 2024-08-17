@@ -83,12 +83,16 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         
         // 射击按钮功能
-        shooter.onTrue(new InstantCommand(() -> s_Shooter.Shoot()))
-               .onFalse(new InstantCommand(() -> s_Shooter.stop()));
+        if(driver.getRawAxis(shooter)  >0.3 )
+            new InstantCommand(() -> s_Shooter.Shoot());
+        else 
+            new InstantCommand(() -> s_Shooter.stop());
         
         // Intake 功能
-        intaker.onTrue(new InstantCommand(() -> s_Intaker.setIntakerSpeed()))
-               .onFalse(new InstantCommand(() -> s_Intaker.stop()));
+        if(driver.getRawAxis(intaker)  >0.3 )
+            new InstantCommand(() -> s_Intaker.setIntakerSpeed());
+        else 
+            new InstantCommand(() -> s_Intaker.stop());
         // Climber 功能
         climber.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 climber 功能 */}));
 
