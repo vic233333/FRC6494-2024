@@ -9,9 +9,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import edu.wpi.first.wpilibj.Timer;
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
     private final TalonFX rightMotor;
+    private Timer t;
 
     public ShooterSubsystem() {
 
@@ -19,7 +21,7 @@ public class ShooterSubsystem extends SubsystemBase {
         rightMotor = new TalonFX(Constants.Shooter.rightMotorID, Constants.Shooter.motorCanBus);
 
         configureMotors();
-
+        t = new Timer();
     }
 
     private void configureMotors() {
@@ -34,7 +36,11 @@ public class ShooterSubsystem extends SubsystemBase {
         rightMotor.getConfigurator().apply(config);
     }
     public void Shoot(){
-        setShooterSpeed();
+        t.restart();
+        while(t.get() < 2.0){
+            setShooterSpeed();
+        }
+        stop();
     }
 
     public void setShooterSpeed() {
