@@ -26,6 +26,7 @@ public class Swerve extends SubsystemBase {
 
     private PIDController headingController;
     private Rotation2d targetHeading;
+    private boolean isFieldRelative = true;  
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.Swerve.kCANivoreBusName);
@@ -47,6 +48,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+        this.isFieldRelative = fieldRelative;
         if (Math.abs(translation.getX()) < Constants.stickDeadband 
             && Math.abs(translation.getY()) < Constants.stickDeadband 
             && Math.abs(rotation) < Constants.stickDeadband) {
@@ -162,5 +164,7 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
         SmartDashboard.putNumber("Target Heading", targetHeading.getDegrees());
         SmartDashboard.putNumber("Heading Error", targetHeading.minus(getHeading()).getDegrees());
+
+        SmartDashboard.putString("Drive Mode", isFieldRelative ? "Field Relative" : "Robot Centric");
     }
 }
