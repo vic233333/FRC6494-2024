@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.Constants.Climber;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -59,6 +59,7 @@ public class RobotContainer {
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
     private final VisionSubsystem s_Vision = new VisionSubsystem();
     private final IntakerSubsysem s_Intaker = new IntakerSubsysem();
+    private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
@@ -77,6 +78,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(s_Swerve);
         CommandScheduler.getInstance().registerSubsystem(s_Shooter);
         CommandScheduler.getInstance().registerSubsystem(s_Vision);
+        CommandScheduler.getInstance().registerSubsystem(s_Climber);
     }
 
     /**
@@ -107,7 +109,13 @@ public class RobotContainer {
         else 
             new InstantCommand(() -> s_Intaker.stop());
         // Climber 功能
-        climber.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 climber 功能 */}));
+        if(climber.getAsBoolean() == true && Climber.f == 0){
+            s_Climber.climb1();
+            Climber.f += 1;
+        }else if(climber.getAsBoolean() == true && Climber.f == 1){
+            s_Climber.climb2();
+            Climber.f += 1;
+        }else s_Climber.stop();
 
         // 切换 robotCentric 模式
         robotCentric.onTrue(new InstantCommand(() -> isRobotCentric = !isRobotCentric));
