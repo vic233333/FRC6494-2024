@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -38,7 +37,6 @@ public class TeleopSwerve extends Command {
         if (Math.abs(rotationVal) >= Constants.stickDeadband) {
             s_Swerve.setTargetHeading(s_Swerve.getHeading());
         }
-
         /* Drive */
         s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
