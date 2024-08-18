@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -21,7 +22,7 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    private final Joystick driver = new Joystick(1);
 
     /* Drive Controls */
     // 平移：左摇杆
@@ -30,9 +31,9 @@ public class RobotContainer {
     // 旋转：右摇杆X轴
     private final int rotationAxis = XboxController.Axis.kRightX.value;
     // 收球：LT左扳机
-    private final int intaker = XboxController.Axis.kLeftTrigger.value;
+    //private final int intaker = XboxController.Axis.kLeftTrigger.value;
     // 发球：RT右扳机
-    private final int shooter = XboxController.Axis.kRightTrigger.value;
+    //private final int shooter = XboxController.Axis.kRightTrigger.value;
 
     /* Driver Buttons */
     // 重置陀螺仪：A
@@ -43,6 +44,12 @@ public class RobotContainer {
     private final JoystickButton climber = new JoystickButton(driver, XboxController.Button.kY.value);
     // 自动对准AprilTag：B
     private final JoystickButton alignToAprilTag = new JoystickButton(driver, XboxController.Button.kB.value);
+
+    private final JoystickButton intaker = new JoystickButton(driver, XboxController.Button.kLeftStick.value);
+
+    private final  JoystickButton shooter = new JoystickButton(driver, XboxController.Button.kRightStick.value);
+
+
     
     /* Track the state of robot-centric control */
     private boolean isRobotCentric = false;
@@ -82,17 +89,23 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         
+        shooter.onTrue(new InstantCommand(() -> s_Shooter.Shoot()))
+               .onFalse(new InstantCommand(() -> s_Shooter.stop()));
+
+        intaker.onTrue(new InstantCommand(() -> s_Intaker.setIntakerSpeed()))
+               .onFalse(new InstantCommand(() -> s_Intaker.stop()));
         // 射击按钮功能
-        if(driver.getRawAxis(shooter)  >0.3 )
-            new InstantCommand(() -> s_Shooter.Shoot());
-        else 
-            new InstantCommand(() -> s_Shooter.stop());
+        // if(driver.getRawAxis(shooter)  >0)
+        //     new InstantCommand(() -> s_Shooter.Shoot());
+        // else 
+        //     new InstantCommand(() -> s_Shooter.stop());
         
-        // Intake 功能
-        if(driver.getRawAxis(intaker)  >0.3 )
-            new InstantCommand(() -> s_Intaker.setIntakerSpeed());
-        else 
-            new InstantCommand(() -> s_Intaker.stop());
+        // // Intake 功能
+        // if(driver.getRawAxis(intaker)  >0){
+        //     new InstantCommand(() -> s_Intaker.setIntakerSpeed());
+        // }  
+        // else 
+        //     new InstantCommand(() -> s_Intaker.stop());
         // Climber 功能
         climber.onTrue(new InstantCommand(() -> {/* TODO: 在这里添加 climber 功能 */}));
 
