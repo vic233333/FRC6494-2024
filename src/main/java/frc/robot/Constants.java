@@ -223,4 +223,7 @@ public final class Constants {
         public static final int intakerMotorID = 7;
         public static final int intakerMotorOutput = 1;
     }
+    public static final class Climber{
+        public static int f = 0;
+    }
 }
