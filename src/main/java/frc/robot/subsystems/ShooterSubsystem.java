@@ -44,8 +44,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setShooterSpeed() {
-        leftMotor.setControl(new DutyCycleOut(Constants.Shooter.leftMotorOutput));
-        rightMotor.setControl(new DutyCycleOut(Constants.Shooter.rightMotorOutput));
+        leftMotor.setControl(new DutyCycleOut(/*Constants.Shooter.leftMotorOutput*/1));
+        rightMotor.setControl(new DutyCycleOut(/*Constants.Shooter.rightMotorOutput*/-1));
     }
 
     public Command shotCommand() {
