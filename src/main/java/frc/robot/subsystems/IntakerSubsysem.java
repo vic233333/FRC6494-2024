@@ -31,8 +31,8 @@ public class IntakerSubsysem extends SubsystemBase {
         intaker2.configAllSettings(allConfigs);
     }
     public void setIntakerSpeed(){
-        intakerMotor.setControl(new DutyCycleOut(/*Constants.Intaker.intakerMotorOutput*/0.1));
-        intaker2.set(VictorSPXControlMode.PercentOutput, 0.1);
+        intakerMotor.setControl(new DutyCycleOut(/*Constants.Intaker.intakerMotorOutput*/0.4));
+        intaker2.set(VictorSPXControlMode.PercentOutput, -0.5);
     }
     public void stop(){
         intakerMotor.setControl(new DutyCycleOut(0));
