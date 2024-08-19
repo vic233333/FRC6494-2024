@@ -106,5 +106,6 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
       s_intaker.setIntakerSpeed();
+      s_shooter.Shoot();
   }
 }
