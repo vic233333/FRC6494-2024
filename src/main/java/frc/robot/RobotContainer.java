@@ -30,10 +30,11 @@ public class RobotContainer {
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     // 旋转：右摇杆X轴
     private final int rotationAxis = XboxController.Axis.kRightX.value;
+
     // 收球：LT左扳机
-    // private final int intaker = XboxController.Axis.kLeftTrigger.value;
+    private final int leftRaw = XboxController.Axis.kLeftTrigger.value;
     // 发球：RT右扳机
-    // private final int shooter = XboxController.Axis.kRightTrigger.value;
+     private final int rightRaw = XboxController.Axis.kRightTrigger.value;
 
     /* Driver Buttons */
     // 重置陀螺仪：A
@@ -44,9 +45,9 @@ public class RobotContainer {
     private final JoystickButton climber = new JoystickButton(driver, XboxController.Button.kY.value);
     // 自动对准AprilTag：B
     private final JoystickButton alignToAprilTag = new JoystickButton(driver, XboxController.Button.kB.value);
-
-    private final JoystickButton intaker = new JoystickButton(driver, XboxController.Button.kLeftStick.value);
-
+    // intaker:LS
+    //private final JoystickButton intaker = new JoystickButton(driver, XboxController.Button.kLeftStick.value);
+    // shooter:RS
     private final  JoystickButton shooter = new JoystickButton(driver, XboxController.Button.kRightStick.value);
 
 
@@ -71,10 +72,17 @@ public class RobotContainer {
                 () -> !robotCentric.getAsBoolean()
             )
         );
+        s_Intaker.setDefaultCommand(
+            new TeleopIntaker(
+                s_Intaker,
+                () -> driver.getRawAxis(leftRaw),
+                () -> driver.getRawAxis(rightRaw)
+            )
+        );
 
         // Configure the button bindings
         configureButtonBindings();
-
+        CommandScheduler.getInstance().registerSubsystem(s_Intaker);
         CommandScheduler.getInstance().registerSubsystem(s_Swerve);
         CommandScheduler.getInstance().registerSubsystem(s_Shooter);
         CommandScheduler.getInstance().registerSubsystem(s_Vision);
@@ -91,11 +99,11 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         
-        shooter.onTrue(new InstantCommand(() -> s_Shooter.Shoot()))
-               .onFalse(new InstantCommand(() -> s_Shooter.stop()));
+        shooter.onTrue(s_Shooter.shotCommand());
+               //.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        intaker.onTrue(new InstantCommand(() -> s_Intaker.setIntakerSpeed()))
-               .onFalse(new InstantCommand(() -> s_Intaker.stop()));
+        //intaker.onTrue(new InstantCommand(() -> s_Intaker.setIntakerSpeed()))
+        //        .onFalse(new InstantCommand(() -> s_Intaker.stop()));
         // 射击按钮功能
         // if(driver.getRawAxis(shooter)  >0.4)
         //     new InstantCommand(() -> s_Shooter.Shoot());
@@ -143,7 +151,9 @@ public class RobotContainer {
     public ShooterSubsystem getShooter() {
         return s_Shooter;
     }
-
+    public IntakerSubsysem getIntaker(){
+        return s_Intaker;
+    }
     public VisionSubsystem getVision() {
         return s_Vision;
     }
