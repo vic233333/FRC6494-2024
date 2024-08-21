@@ -110,7 +110,7 @@ public class RobotContainer {
         //     new InstantCommand(() -> s_Intaker.stop());
             
         // Climber 功能
-        if(climber.getAsBoolea3''n() == true && Climber.f == 0){
+        if(climber.getAsBoolean() == true && Climber.f == 0){
             s_Climber.climb1();
             Climber.f += 1;
         }else if(climber.getAsBoolean() == true && Climber.f == 1){
@@ -132,7 +132,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new exampleAuto(s_Swerve);
+        return new exampleAuto(s_Swerve,s_Shooter,s_Intaker);
     }
 
     // Getter methods for subsystems
