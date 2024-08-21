@@ -110,7 +110,7 @@ public class RobotContainer {
         //     new InstantCommand(() -> s_Intaker.stop());
             
         // Climber 功能
-        if(climber.getAsBoolea3''n() == true && Climber.f == 0){
+        if(climber.getAsBoolean() == true && Climber.f == 0){
             s_Climber.climb1();
             Climber.f += 1;
         }else if(climber.getAsBoolean() == true && Climber.f == 1){
