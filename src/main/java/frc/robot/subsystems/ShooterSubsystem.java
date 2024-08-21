@@ -60,7 +60,10 @@ public class ShooterSubsystem extends SubsystemBase {
         leftMotor.setControl(new DutyCycleOut(0));
         rightMotor.setControl(new DutyCycleOut(0));
     }
-
+    public void wait(double time){
+        t.restart();
+        while(t.get() < time);
+    }
 
     @Override
     public void periodic() {
