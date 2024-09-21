@@ -48,7 +48,7 @@ public class RobotContainer {
     // intaker:LS
     //private final JoystickButton intaker = new JoystickButton(driver, XboxController.Button.kLeftStick.value);
     // shooter:RS
-    private final  JoystickButton shooter = new JoystickButton(driver, XboxController.Button.kRightStick.value);
+    //private final  JoystickButton shooter = new JoystickButton(driver, XboxController.Button.kRightStick.value);
 
 
     
@@ -72,9 +72,18 @@ public class RobotContainer {
                 () -> !robotCentric.getAsBoolean()
             )
         );
+
         s_Intaker.setDefaultCommand(
             new TeleopIntaker(
                 s_Intaker,
+                () -> driver.getRawAxis(leftRaw),
+                () -> driver.getRawAxis(rightRaw)
+            )
+        );
+
+         s_Shooter.setDefaultCommand(
+            new TeleopShooter(
+                s_Shooter,
                 () -> driver.getRawAxis(leftRaw),
                 () -> driver.getRawAxis(rightRaw)
             )
@@ -99,7 +108,7 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         
-        shooter.onTrue(s_Shooter.shotCommand());
+        //shooter.onTrue(s_Shooter.shotCommand());
                //.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
         //intaker.onTrue(new InstantCommand(() -> s_Intaker.setIntakerSpeed()))
