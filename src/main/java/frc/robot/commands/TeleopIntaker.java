@@ -21,8 +21,7 @@ public class TeleopIntaker extends Command {
 
     @Override
     public void execute() {
-        if(leftRaw.getAsDouble() >0.3 && rightRaw.getAsDouble() <0.3) s_Intaker.setIntakerSpeed();
-        else if (leftRaw.getAsDouble() > 0.3 && rightRaw.getAsDouble() >0.3) s_Intaker.setIntakerSpeedF();
+        if(leftRaw.getAsDouble() >0.5 && rightRaw.getAsDouble() <0.5 || leftRaw.getAsDouble() <0.5 && rightRaw.getAsDouble() >0.5) s_Intaker.setIntakerSpeed();
         else s_Intaker.stop();
     }
 }
