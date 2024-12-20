@@ -55,10 +55,6 @@ public class exampleAuto extends SequentialCommandGroup {
 
 
         addCommands(
-            new InstantCommand(() -> s_Shooter.wait(2d)),
-            new InstantCommand(() -> s_Intaker.setIntakerSpeed()),
-            new InstantCommand(() -> s_Shooter.Shoot()),
-            new InstantCommand(() -> s_Intaker.stop()),
             new InstantCommand(() -> s_Swerve.setPose(exampleTrajectory.getInitialPose())),swerveControllerCommand);
     }
 }
