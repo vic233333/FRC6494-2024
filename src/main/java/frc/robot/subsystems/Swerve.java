@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,7 +28,7 @@ public class Swerve extends SubsystemBase {
     private PIDController headingController;
     private Rotation2d targetHeading;
     private boolean isFieldRelative = true;  
-
+    private final Timer m_timer = new Timer();
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.Swerve.kCANivoreBusName);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -45,6 +46,11 @@ public class Swerve extends SubsystemBase {
         };
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
+        m_timer.restart();
+        while(m_timer.get()<1.0)
+            for(SwerveModule mod : mSwerveMods){
+                mod.resetDesiredState(new SwerveModuleState(0, mod.getState().angle), true);
+            }
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -77,10 +83,11 @@ public class Swerve extends SubsystemBase {
                                     rotation + headingCorrection)
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
-
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
+        
+
     }
 
     /* Used by SwerveControllerCommand in Auto */
@@ -107,7 +114,14 @@ public class Swerve extends SubsystemBase {
         }
         return positions;
     }
-
+    public void reset1(){
+        m_timer.restart();
+        while(m_timer.get()<1.0)
+            for(SwerveModule mod : mSwerveMods){
+                mod.resetDesiredState(new SwerveModuleState(0, mod.getState().angle), true);
+            }
+        resetModulesToAbsolute();
+    }
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
     }
@@ -144,7 +158,7 @@ public class Swerve extends SubsystemBase {
 
     public void zeroOutput() {
         for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(new SwerveModuleState(0, mod.getState().angle), true);
+            mod.resetDesiredState(new SwerveModuleState(0, mod.getState().angle), true);
         }
     }
     
@@ -158,7 +172,8 @@ public class Swerve extends SubsystemBase {
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getState().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " RealAngle", mod.getAngle().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
