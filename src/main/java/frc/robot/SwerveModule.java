@@ -15,7 +15,7 @@ import frc.lib.util.SwerveModuleConstants;
 
 public class SwerveModule {
     public int moduleNumber;
-    private Rotation2d angleOffset;
+    public Rotation2d angleOffset;
 
     private TalonFX mAngleMotor;
     private TalonFX mDriveMotor;
@@ -51,10 +51,20 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle); 
-        mAngleMotor.setControl(anglePosition.withPosition(desiredState.angle.getRotations()));
+        new Rotation2d();
+        Rotation2d a3=desiredState.angle;
+        mAngleMotor.setControl(anglePosition.withPosition(Rotation2d.fromDegrees(a3.getDegrees()).getRotations()));
         setSpeed(desiredState, isOpenLoop);
     }
-
+    public void resetDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
+        desiredState = SwerveModuleState.optimize(desiredState, getState().angle); 
+        new Rotation2d();
+        Rotation2d a1=getAngle();
+        Rotation2d a2=Rotation2d.fromRotations(mAngleMotor.getPosition().getValue());
+        Rotation2d a3=desiredState.angle;
+        mAngleMotor.setControl(anglePosition.withPosition(Rotation2d.fromDegrees(a1.getDegrees()+a3.getDegrees()).getRotations()));
+        setSpeed(desiredState, isOpenLoop);
+    }
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
@@ -82,11 +92,13 @@ public class SwerveModule {
             Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
     }
-
+    public Rotation2d getAngle(){
+        return Rotation2d.fromDegrees(getCANcoder().getDegrees() -angleOffset.getDegrees());
+    }
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(
             Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.Swerve.wheelCircumference), 
-            Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
+            getAngle()
         );
     }
 }
