@@ -58,7 +58,6 @@ public class RobotContainer {
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
-    private final VisionSubsystem s_Vision = new VisionSubsystem();
     private final IntakerSubsysem s_Intaker = new IntakerSubsysem();
     private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -94,7 +93,6 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(s_Intaker);
         CommandScheduler.getInstance().registerSubsystem(s_Swerve);
         CommandScheduler.getInstance().registerSubsystem(s_Shooter);
-        CommandScheduler.getInstance().registerSubsystem(s_Vision);
         CommandScheduler.getInstance().registerSubsystem(s_Climber);
     }
 
@@ -139,7 +137,6 @@ public class RobotContainer {
         robotCentric.onTrue(new InstantCommand(() -> isRobotCentric = !isRobotCentric));
         
         // 对准 AprilTag 功能
-        alignToAprilTag.whileTrue(new AlignToAprilTagCommand(s_Swerve, s_Vision));
     }
 
     /**
@@ -162,8 +159,5 @@ public class RobotContainer {
     }
     public IntakerSubsysem getIntaker(){
         return s_Intaker;
-    }
-    public VisionSubsystem getVision() {
-        return s_Vision;
     }
 }
