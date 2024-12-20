@@ -22,7 +22,7 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(1);
+    private final Joystick driver = new Joystick(0);
 
     /* Drive Controls */
     // 平移：左摇杆
@@ -45,6 +45,8 @@ public class RobotContainer {
     private final JoystickButton climber = new JoystickButton(driver, XboxController.Button.kY.value);
     // 自动对准AprilTag：B
     private final JoystickButton alignToAprilTag = new JoystickButton(driver, XboxController.Button.kB.value);
+    //重置底盘
+    private final JoystickButton resetSwerve = new JoystickButton(driver, XboxController.Button.kBack.value);
     // intaker:LS
     //private final JoystickButton intaker = new JoystickButton(driver, XboxController.Button.kLeftStick.value);
     // shooter:RS
@@ -56,7 +58,7 @@ public class RobotContainer {
     private boolean isRobotCentric = false;
     
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
+    public final Swerve s_Swerve = new Swerve();
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
     private final IntakerSubsysem s_Intaker = new IntakerSubsysem();
     private final ClimberSubsystem s_Climber = new ClimberSubsystem();
@@ -67,26 +69,27 @@ public class RobotContainer {
                 s_Swerve,
                 () -> -driver.getRawAxis(translationAxisX),
                 () -> -driver.getRawAxis(strafeAxis),
-                () -> -driver.getRawAxis(rotationAxis),
-                () -> !robotCentric.getAsBoolean()
+                () -> -driver.getRawAxis(leftRaw),
+                () -> !isRobotCentric,
+                () -> climber.getAsBoolean()
             )
         );
 
-        s_Intaker.setDefaultCommand(
-            new TeleopIntaker(
-                s_Intaker,
-                () -> driver.getRawAxis(leftRaw),
-                () -> driver.getRawAxis(rightRaw)
-            )
-        );
+        // s_Intaker.setDefaultCommand(
+        //     new TeleopIntaker(
+        //         s_Intaker,
+        //         () -> driver.getRawAxis(leftRaw),
+        //         () -> driver.getRawAxis(rightRaw)
+        //     )
+        // );
 
-         s_Shooter.setDefaultCommand(
-            new TeleopShooter(
-                s_Shooter,
-                () -> driver.getRawAxis(leftRaw),
-                () -> driver.getRawAxis(rightRaw)
-            )
-        );
+        //  s_Shooter.setDefaultCommand(
+        //     new TeleopShooter(
+        //         s_Shooter,
+        //         () -> driver.getRawAxis(leftRaw),
+        //         () -> driver.getRawAxis(rightRaw)
+        //     )
+        // );
 
         // Configure the button bindings
         configureButtonBindings();
@@ -105,7 +108,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        
+        resetSwerve.whileTrue(new InstantCommand(()-> s_Swerve.resetModulesToAbsolute()));
         //shooter.onTrue(s_Shooter.shotCommand());
                //.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
@@ -134,7 +137,7 @@ public class RobotContainer {
         }else s_Climber.stop();
 
         // 切换 robotCentric 模式
-        robotCentric.onTrue(new InstantCommand(() -> isRobotCentric = !isRobotCentric));
+        robotCentric.whileTrue(new InstantCommand(() -> isRobotCentric = !isRobotCentric));
         
         // 对准 AprilTag 功能
     }
