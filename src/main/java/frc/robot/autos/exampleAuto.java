@@ -1,9 +1,5 @@
 package frc.robot.autos;
 
-import frc.robot.Constants;
-import frc.robot.subsystems.*;
-
-
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -17,6 +13,10 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.Constants;
+import frc.robot.subsystems.IntakerSubsysem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.Swerve;
 
 public class exampleAuto extends SequentialCommandGroup {
     public exampleAuto(Swerve s_Swerve,ShooterSubsystem s_Shooter,IntakerSubsysem s_Intaker){
@@ -32,9 +32,9 @@ public class exampleAuto extends SequentialCommandGroup {
                 // Start at the origin facing the +X direction
                 new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(-1, 0)),
+                List.of(new Translation2d(3, 0)),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(-3, 0, new Rotation2d(0)),
+                new Pose2d(6, 3, new Rotation2d(0)),
                 config);
 
         var thetaController =
@@ -55,6 +55,7 @@ public class exampleAuto extends SequentialCommandGroup {
 
 
         addCommands(
+            new InstantCommand(()->s_Swerve.reset1()),
             new InstantCommand(() -> s_Swerve.setPose(exampleTrajectory.getInitialPose())),swerveControllerCommand);
     }
 }
