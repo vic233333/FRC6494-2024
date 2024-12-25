@@ -1,13 +1,13 @@
 package frc.robot.commands;
 
-import frc.robot.Constants;
-import frc.robot.subsystems.Swerve;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.subsystems.Swerve;
 
 public class TeleopSwerve extends Command {    
     private Swerve s_Swerve;    
@@ -26,6 +26,7 @@ public class TeleopSwerve extends Command {
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
         this.resetSwerve = resetSwerve;
+
     }
 
     @Override
@@ -39,6 +40,7 @@ public class TeleopSwerve extends Command {
         if (Math.abs(rotationVal) >= Constants.stickDeadband) {
             s_Swerve.setTargetHeading(s_Swerve.getHeading());
         }
+        if(this.resetSwerve.getAsBoolean()==true)   this.s_Swerve.reset1();
         /* Drive */
         s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
