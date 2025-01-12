@@ -3,17 +3,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Climber;
-import frc.robot.autos.*;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
-
+import frc.robot.autos.exampleAuto;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.IntakerSubsysem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.Swerve;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -64,16 +63,6 @@ public class RobotContainer {
     private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        s_Swerve.setDefaultCommand(
-            new TeleopSwerve(
-                s_Swerve,
-                () -> -driver.getRawAxis(translationAxisX),
-                () -> -driver.getRawAxis(strafeAxis),
-                () -> -driver.getRawAxis(leftRaw),
-                () -> !isRobotCentric,
-                () -> climber.getAsBoolean()
-            )
-        );
 
         // s_Intaker.setDefaultCommand(
         //     new TeleopIntaker(
@@ -150,8 +139,8 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
         return new exampleAuto(s_Swerve,s_Shooter,s_Intaker);
+        //return autoChooser.getSelected();
     }
-
     // Getter methods for subsystems
     public Swerve getSwerve() {
         return s_Swerve;
